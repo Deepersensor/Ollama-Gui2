@@ -9,7 +9,7 @@ export const ollamaRequest = async <T extends any>(
   try {
     const res = await Axios({
       method: m,
-      url: `${core.server_host._value}/${path}`,
+      url: `http://${core.server_host._value}/${path}`,
       data: c?.data,
       headers: {
         "Content-Type": "application/json",
@@ -18,8 +18,8 @@ export const ollamaRequest = async <T extends any>(
 
     return res.data as T;
   } catch (error) {
-    core.server_connected.set(false);
-    throw error
+    core.server.patchObject({ connected: false });
+    throw error;
   }
 };
 

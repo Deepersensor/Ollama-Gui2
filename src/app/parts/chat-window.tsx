@@ -41,7 +41,7 @@ export const ChatWindow = () => {
     core.last_used_model.set(model_name);
 
     // Update the current conversation we are looking at
-    core.focused_conv_meta.patchObject({ model: model_name });
+    core.focused_conv_meta.updatePiece("model", model_name);
   };
 
   const sendPromptMessage = useCallback(async () => {
@@ -52,7 +52,7 @@ export const ChatWindow = () => {
       const v = {
         id: generateRandomId(12),
         created_at: dayjs().toDate(),
-        model: last_used_model,
+        model: conversation_meta.model,
         title: "Conversation " + generateIdNumber(2),
       };
 

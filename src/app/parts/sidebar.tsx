@@ -11,7 +11,7 @@ export const Sidebar = () => {
   const convs = useSimple(core.conversations);
   const focused_conv_id = useSimple(core.focused_conv_id);
   const last_used_model = useSimple(core.last_used_model);
-  const server_connected = useSimple(core.server_connected);
+  const server = useSimple(core.server);
   const server_host = useSimple(core.server_host);
 
   const newConversation = () => {
@@ -48,16 +48,16 @@ export const Sidebar = () => {
 
   return (
     <div className="flex flex-col w-[340px] border-r-[1px] border-solid border-r-neutral-200">
-      <div className="p-4">
+      <div className="p-4 border-b-[1px] border-b-neutral-200">
         <div className="flex-row flex ">
-          <p className="text-xs font-medium">Status: </p>
+          <p className="text-sm font-medium">Status: </p>
           <p
             className={twMerge(
-              "text-xs font-medium ml-1",
-              server_connected ? "text-green-700" : "text-red-700"
+              "text-sm font-medium ml-1",
+              server.connected ? "text-green-700" : "text-red-700"
             )}
           >
-            {server_connected ? "Connected" : "Disconnected"}
+            {server.connected ? "Connected" : "Disconnected"}
           </p>
         </div>
         <p className="text-xs opacity-50">{server_host}</p>

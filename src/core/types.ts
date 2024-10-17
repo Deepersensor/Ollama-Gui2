@@ -34,9 +34,12 @@ export type ICoreType = {
   focused_conv_data: ConversationMessages;
   focused_conv_meta: ConversationMeta;
   last_used_model: string;
-
   server_host: string;
-  server_connected: boolean;
+  server: {
+    auto_connect: boolean,
+    use_auto_start: boolean,
+    connected: boolean,
+  }
   available_models: IModelType[];
   introduction_finished: boolean;
 };

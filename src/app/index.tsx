@@ -6,7 +6,6 @@ import { ChatWindow } from "./parts/chat-window";
 import { SettingsWrapper } from "./parts/settings-wrapper";
 import { Command } from "@tauri-apps/plugin-shell";
 import { useSimple } from "simple-core-state";
-import Axios from 'axios';
 
 // Load the database on the app frame
 loadDB();
@@ -15,23 +14,35 @@ let intervalID: NodeJS.Timeout;
 
 export const AppFrame = () => {
   const host = useSimple(core.server_host);
-   const startServer = useCallback(async () => {
-    console.log(host);
-    
-     let result = await Command.create("ollama-server", [
-       "-c",
-       `OLLAMA_ORIGINS=* OLLAMA_HOST=${host} ollama serve`,
-     ]).execute();
-     console.log(result);
-   }, [host]);
 
-  
+  const startServer = useCallback(async () => {
+    console.log("host", host);
+
+    // Ping the server first to check if its already running
+    const server_up = await serverStatusCheck();
+    console.log("server_up", server_up);
+
+    if (server_up) {
+      return;
+    }
+
+    try {
+      let result = await Command.create("ollama-server", [
+        "-c",
+        `OLLAMA_ORIGINS=* OLLAMA_HOST=${host} ollama serve`,
+      ]).execute();
+      console.log("result", result);
+    } catch (error) {}
+
+    // TODO: ping the server so we can verify
+    core.server.patchObject({ connected: true });
+  }, [host]);
 
   const heartbeatCheck = async () => {
     intervalID = setInterval(async () => {
       serverStatusCheck();
-    }, 5000)
-  }
+    }, 5000);
+  };
 
   const loadAppData = async () => {
     // Create the tables if not exists
@@ -47,10 +58,10 @@ export const AppFrame = () => {
 
   useEffect(() => {
     startServer();
-    serverStatusCheck();
+
     heartbeatCheck();
+
     setTimeout(() => {
-      
       setTimeout(() => {
         // Load app data in order for functionality
         loadAppData();
@@ -59,7 +70,7 @@ export const AppFrame = () => {
 
     return () => {
       clearInterval(intervalID);
-    }
+    };
   }, []);
 
   return (

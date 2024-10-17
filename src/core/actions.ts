@@ -29,6 +29,7 @@ export const sendPrompt = async (p: sendProptOptions) => {
 export const syncModels = async () => {
   const res = await ollamaRequest<{ models: IModelType[] }>("GET", "api/tags");
 
+  if (res.models?.length > 0)
   core.available_models.set(
     res.models.map((item) => ({
       name: item.name,
@@ -39,16 +40,19 @@ export const syncModels = async () => {
   );
 };
 
-export const serverStatusCheck = async () => {
+export const serverStatusCheck = async (): Promise<boolean> => {
   try {
-    const res = await Axios({ url: core.server_host._value });
+    const res = await Axios({ url: 'http://' + core.server_host._value });
     if (res.status === 200) {
-      core.server_connected.set(true);
+      core.server.patchObject({ connected: true });
+      return true;
     } else {
-      core.server_connected.set(false);
+      core.server.patchObject({ connected: false });
+      return false;
     }
   } catch (error) {
     // TODO: alert the user for disconnection
-    core.server_connected.set(false);
+    core.server.patchObject({ connected: false });
+    return false;
   }
 };

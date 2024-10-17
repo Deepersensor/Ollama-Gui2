@@ -32,7 +32,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
       )}
       <div
         className={twMerge(
-          "mb-10 px-4 py-2 rounded-full w-fit",
+          "mb-10 px-4 py-2 rounded-xl w-fit",
           props.ai_replied ? "pl-0" : "bg-white"
         )}
       >
